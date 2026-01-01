@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio | Sebastián Malca</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .text-gradient {
+            background: linear-gradient(to right, #a78bfa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-300 antialiased selection:bg-purple-500 selection:text-white">
+
+<nav class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center sticky top-0 bg-gray-900/90 backdrop-blur-md z-50">
+    <div class="text-2xl font-bold text-white tracking-tighter">
+        SM<span class="text-purple-500">.</span>
+    </div>
+    <div class="space-x-4">
+        <a href="#proyectos" class="text-sm font-medium hover:text-white transition">Proyectos</a>
+        <a href="#contacto" class="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-full text-sm font-medium transition border border-gray-700">
+            Contactar
+        </a>
+    </div>
+</nav>
+
+<header class="max-w-4xl mx-auto px-6 py-20 text-center">
+    <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight">
+        👋 Hola, soy <br>
+        <span class="text-gradient">Sebastián Malca</span>
+    </h1>
+    <p class="text-xl md:text-2xl text-gray-400 leading-relaxed">
+        Estudiante del 7.º ciclo de Ingeniería de Software en la UNMSM.
+    </p>
+    <p class="mt-4 text-gray-500">
+        Interés en ciberseguridad, desarrollo web y aplicaciones.
+    </p>
+</header>
+
+<section class="max-w-6xl mx-auto px-6 mb-24">
+    <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-12">
+
+        <div class="w-full md:w-1/3 flex justify-center">
+            <div class="relative w-64 h-64 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-lg group">
+                <img src="https://via.placeholder.com/400x400/374151/ffffff?text=Tu+Foto+Aqui"
+                     alt="Sebastián Malca"
+                     class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+            </div>
+        </div>
+
+        <div class="w-full md:w-2/3">
+            <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                <i class="fas fa-user-astronaut text-purple-400"></i> Sobre mí
+            </h2>
+            <p class="mb-4 text-lg">
+                Soy un estudiante enfocado en el desarrollo profesional en el área de <strong class="text-purple-300">ciberseguridad</strong>.
+                Me considero una persona proactiva, con aprendizaje rápido y orientación a resultados.
+            </p>
+            <p class="mb-6 text-gray-400 italic border-l-4 border-purple-500 pl-4">
+                "🎯 Mi objetivo es crecer profesionalmente en el área de ciberseguridad, obtener certificaciones y contribuir a la protección de la información en las organizaciones."
+            </p>
+
+            <h3 class="text-white font-semibold mb-4">Conocimientos Clave:</h3>
+            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Admin. básica Microsoft 365 y AWS</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Gestión de identidades (AWS IAM)</li>
+                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Principios de ciberseguridad</li>
+                <li class="flex items-center gap-2"><i class="fas fa-code text-blue-400"></i> Programación en Java y Python</li>
+                <li class="flex items-center gap-2"><i class="fas fa-terminal text-blue-400"></i> Scripts de automatización</li>
+                <li class="flex items-center gap-2"><i class="fas fa-network-wired text-purple-400"></i> Análisis de vulnerabilidades</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section id="proyectos" class="max-w-6xl mx-auto px-6 mb-24">
+    <h2 class="text-3xl font-bold text-white mb-10 text-center">🚀 Mis Proyectos Destacados</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+            <div class="h-48 overflow-hidden relative">
+                <img src="https://via.placeholder.com/600x400/1f2937/ffffff?text=Proyecto+Python"
+                     alt="Proyecto 1" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                    <span class="text-white font-bold border border-white px-4 py-2 rounded-full">Ver Detalles</span>
+                </div>
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-white mb-2">Automatización de Seguridad</h3>
+                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                    Scripts desarrollados en Python para automatizar tareas rutinarias de seguridad y auditoría de logs en servidores Linux.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-400 border border-gray-700">Python</span>
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-yellow-400 border border-gray-700">Linux</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <a href="#" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i> Código</a>
+                    <a href="#" class="text-gray-500 hover:text-white text-sm"><i class="fas fa-external-link-alt"></i> Demo</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+            <div class="h-48 overflow-hidden relative">
+                <img src="https://via.placeholder.com/600x400/1f2937/ffffff?text=AWS+IAM"
+                     alt="Proyecto 2" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-white mb-2">Gestión de Accesos AWS</h3>
+                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                    Implementación de políticas IAM seguras y roles para una arquitectura cloud simulada, siguiendo el principio de menor privilegio.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-orange-400 border border-gray-700">AWS</span>
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-purple-400 border border-gray-700">IAM</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <a href="#" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i> Código</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+            <div class="h-48 overflow-hidden relative">
+                <img src="https://via.placeholder.com/600x400/1f2937/ffffff?text=App+Java"
+                     alt="Proyecto 3" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+            </div>
+            <div class="p-6">
+                <h3 class="text-xl font-bold text-white mb-2">Sistema de Gestión</h3>
+                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                    Aplicación de escritorio desarrollada en Java para la gestión de inventarios, conectada a una base de datos local.
+                </p>
+                <div class="flex flex-wrap gap-2 mb-6">
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-red-400 border border-gray-700">Java</span>
+                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-300 border border-gray-700">SQL</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <a href="#" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i> Código</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="max-w-6xl mx-auto px-6 mb-20 text-center">
+    <h3 class="text-2xl font-bold text-white mb-8">⚡ Stack Tecnológico</h3>
+    <div class="flex flex-wrap justify-center gap-4">
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">Excel</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-orange-500 hover:text-orange-400 transition cursor-default"><i class="fab fa-aws"></i> AWS</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-blue-500 hover:text-blue-400 transition cursor-default"><i class="fab fa-microsoft"></i> Microsoft 365</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-yellow-500 hover:text-yellow-400 transition cursor-default"><i class="fab fa-linux"></i> Linux</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-green-500 hover:text-green-400 transition cursor-default"><i class="fab fa-python"></i> Python</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-red-500 hover:text-red-400 transition cursor-default"><i class="fab fa-java"></i> Java</span>
+        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">SIEM</span>
+    </div>
+</section>
+
+<footer id="contacto" class="border-t border-gray-800 bg-gray-900 mt-20">
+    <div class="max-w-5xl mx-auto px-6 py-16 text-center">
+        <h2 class="text-3xl font-bold text-white mb-8">📬 Contacto</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-2xl mx-auto">
+            <a href="mailto:malcasebastian201@gmail.com" class="bg-gray-800 p-6 rounded-xl hover:bg-gray-750 border border-gray-700 hover:border-purple-500 transition group">
+                <i class="fas fa-envelope text-2xl text-purple-500 mb-2 group-hover:scale-110 transition"></i>
+                <p class="text-white font-medium">Email</p>
+                <p class="text-sm text-gray-400">malcasebastian201@gmail.com</p>
+            </a>
+            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                <i class="fas fa-phone text-2xl text-green-500 mb-2"></i>
+                <p class="text-white font-medium">Celular</p>
+                <p class="text-sm text-gray-400">958-166-988</p>
+            </div>
+        </div>
+
+        <div class="flex justify-center gap-8">
+            <a href="https://github.com/SebastianMalca" target="_blank" class="text-gray-400 hover:text-white transition text-3xl">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="#" target="_blank" class="text-gray-400 hover:text-blue-500 transition text-3xl">
+                <i class="fab fa-linkedin"></i>
+            </a>
+        </div>
+
+        <p class="mt-12 text-sm text-gray-600">
+            &copy; 2024 Sebastián Malca. Todos los derechos reservados.
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>
