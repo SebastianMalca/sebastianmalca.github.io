@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,233 +9,619 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
         .text-gradient {
             background: linear-gradient(to right, #a78bfa, #3b82f6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
+        /* ===== LIGHTBOX / MODAL ===== */
+        #lightbox-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+        }
+
+        #lightbox-overlay.active {
+            display: flex;
+        }
+
+        #lightbox-container {
+            position: relative;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        #lightbox-img {
+            max-width: 85vw;
+            max-height: 78vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 0 60px rgba(167, 139, 250, 0.3);
+            transition: opacity 0.25s ease;
+        }
+
+        #lightbox-title {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 0.03em;
+        }
+
+        #lightbox-counter {
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+
+        #lightbox-close {
+            position: absolute;
+            top: -48px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 1rem;
+        }
+
+        #lightbox-close:hover {
+            background: rgba(239, 68, 68, 0.6);
+        }
+
+        .lb-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 1.1rem;
+            z-index: 10;
+        }
+
+        .lb-arrow:hover {
+            background: rgba(167, 139, 250, 0.5);
+        }
+
+        #lb-prev {
+            left: -60px;
+        }
+
+        #lb-next {
+            right: -60px;
+        }
+
+        /* Thumbnails */
+        #lightbox-thumbs {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .lb-thumb {
+            width: 64px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 6px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            opacity: 0.6;
+            transition: opacity 0.2s, border-color 0.2s;
+        }
+
+        .lb-thumb:hover,
+        .lb-thumb.active {
+            opacity: 1;
+            border-color: #a78bfa;
+        }
+
+        /* Card hover button */
+        .card-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .group:hover .card-img-overlay {
+            opacity: 1;
+        }
+
+        .ver-imgs-btn {
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.875rem;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            padding: 8px 22px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(4px);
+            transition: background 0.2s, transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .ver-imgs-btn:hover {
+            background: rgba(167, 139, 250, 0.4);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 640px) {
+            #lb-prev {
+                left: -46px;
+            }
+
+            #lb-next {
+                right: -46px;
+            }
+
+            #lightbox-img {
+                max-width: 95vw;
+                max-height: 65vh;
+            }
+        }
     </style>
 </head>
+
 <body class="bg-gray-900 text-gray-300 antialiased selection:bg-purple-500 selection:text-white">
 
-<nav class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center sticky top-0 bg-gray-900/90 backdrop-blur-md z-50">
-    <div class="text-2xl font-bold text-white tracking-tighter">
-        SM<span class="text-purple-500">.</span>
-    </div>
-    <div class="space-x-4">
-        <a href="#proyectos" class="text-sm font-medium hover:text-white transition">Proyectos</a>
-        <a href="#contacto" class="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-full text-sm font-medium transition border border-gray-700">
-            Contactar
-        </a>
-    </div>
-</nav>
-
-<header class="max-w-4xl mx-auto px-6 py-20 text-center">
-    <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight">
-         Hola, soy <br>
-        <span class="text-gradient">Sebastián Malca</span>
-    </h1>
-    <p class="text-xl md:text-2xl text-gray-400 leading-relaxed">
-        Estudiante del 7.º ciclo de Ingeniería de Software en la UNMSM.
-    </p>
-</header>
-
-<section class="max-w-6xl mx-auto px-6 mb-24">
-    <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-12">
-
-        <div class="w-full md:w-1/3 flex justify-center">
-            <div class="relative w-64 h-64 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-lg group">
-                <img src="assets/Perfil.png"
-                     alt="Sebastián Malca"
-                     class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
-            </div>
-        </div>
-
-        <div class="w-full md:w-2/3">
-            <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
-                <i class="fas fa-user-astronaut text-purple-400"></i> Sobre mí
-            </h2>
-            <p class="mb-6 text-lg">
-                Soy un estudiante de la carrera de Ingenerìa de software con interés en la <strong class="text-purple-300">Ciberseguridad</strong> , <strong class="text-purple-300">Desarrollo web y de aplicaciones</strong> y la <strong class="text-purple-300">Aumatización de procesos</strong>.
-                Me considero una persona proactiva, con alta capacidad de aprendizaje y un enfoque orientado al logro de resultados, preparada para aportar valor desde el primer día.
-            </p>
-
-            <h3 class="text-white font-semibold mb-4">Conocimientos Clave:</h3>
-            <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Admin. básica Microsoft 365 y AWS</li>
-                <li class="flex items-center gap-2"><i class="fas fa-code text-blue-400"></i> Desarrollo de aplicaciones web</li>
-                <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Principios de ciberseguridad</li>
-                <li class="flex items-center gap-2"><i class="fas fa-code text-blue-400"></i> Programación en Java y Python</li>
-                <li class="flex items-center gap-2"><i class="fas fa-terminal text-blue-400"></i> Scripts de automatización</li>
-                <li class="flex items-center gap-2"><i class="fas fa-network-wired text-purple-400"></i> Análisis de vulnerabilidades</li>
-            </ul>
+    <!-- ===== LIGHTBOX MODAL ===== -->
+    <div id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Visor de imágenes">
+        <div id="lightbox-container">
+            <button id="lightbox-close" title="Cerrar"><i class="fas fa-times"></i></button>
+            <button class="lb-arrow" id="lb-prev" title="Anterior"><i class="fas fa-chevron-left"></i></button>
+            <button class="lb-arrow" id="lb-next" title="Siguiente"><i class="fas fa-chevron-right"></i></button>
+            <div id="lightbox-title"></div>
+            <img id="lightbox-img" src="" alt="Imagen del proyecto">
+            <div id="lightbox-counter"></div>
+            <div id="lightbox-thumbs"></div>
         </div>
     </div>
-</section>
 
-<section class="max-w-6xl mx-auto px-6 mb-24">
-    <h2 class="text-3xl font-bold text-white mb-10 text-center">💼 ¿Qué puedo ofrecer?</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300 group">
-            <div class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500 transition">
-                <i class="fas fa-shield-alt text-2xl text-blue-400 group-hover:text-white"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-3">Seguridad Informática</h3>
-            <p class="text-gray-400 leading-relaxed">
-                Capacidad para identificar vulnerabilidades básicas, aplicar principios de hardening en sistemas y colaborar en la prevención de amenazas digitales.
-            </p>
+    <nav
+        class="max-w-6xl mx-auto px-6 py-8 flex justify-between items-center sticky top-0 bg-gray-900/90 backdrop-blur-md z-50">
+        <div class="text-2xl font-bold text-white tracking-tighter">
+            SM<span class="text-purple-500">.</span>
         </div>
-
-        <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition duration-300 group">
-            <div class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-500 transition">
-                <i class="fab fa-aws text-2xl text-purple-400 group-hover:text-white"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-3">Gestión Cloud</h3>
-            <p class="text-gray-400 leading-relaxed">
-                Administración de entornos en AWS y Microsoft 365. Configuración de roles IAM, control de accesos y despliegue seguro de recursos.
-            </p>
-        </div>
-
-        <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-green-500 transition duration-300 group">
-            <div class="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-green-500 transition">
-                <i class="fas fa-robot text-2xl text-green-400 group-hover:text-white"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-3">Automatización</h3>
-            <p class="text-gray-400 leading-relaxed">
-                Creación de scripts en Python y Bash para automatizar tareas repetitivas, auditoría de logs y optimización de procesos operativos.
-            </p>
-        </div>
-
-    </div>
-</section>
-
-<section id="proyectos" class="max-w-6xl mx-auto px-6 mb-24 scroll-mt-32">
-    <h2 class="text-3xl font-bold text-white mb-10 text-center">Mis Proyectos Destacados</h2>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
-            <div class="h-48 overflow-hidden relative">
-                <img src="assets/Escaner%20Puertos(1).PNG"
-                     alt="Python Port Scanner"
-                     class="w-full h-full object-cover object-top group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span class="text-white font-bold border border-white px-4 py-2 rounded-full">Ver Imagenes</span>
-                </div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-xl font-bold text-white mb-2">Python Port Scanner</h3>
-                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
-                    Escáner de puertos creado en Python con multiproceso, captura de banners y salida a JSON/TXT.
-                </p>
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-green-400 border border-gray-700">Python</span>
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-yellow-400 border border-gray-700">Linux</span>
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-400 border border-gray-700">Ciberseguridad</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <a href="https://github.com/SebastianMalca/python-port-scanner" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i> Código</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
-            <div class="h-48 overflow-hidden relative">
-                <img src="assets/ANMI(1).PNG"
-                     alt="Chat Bot IAM"
-                     class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span class="text-white font-bold border border-white px-4 py-2 rounded-full">Ver Imagenes</span>
-                </div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-xl font-bold text-white mb-2">Chat Bot ANMI</h3>
-                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
-                    El propósito de ANMI es actuar como asistente educativo de IA para combatir la anemia a través de la orientación nutricional materna e infantil..
-                </p>
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-green-400 border border-gray-700">Python</span>
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-purple-400 border border-gray-700">IA</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <a href="https://github.com/SebastianMalca/ChatBot-ANMI" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i> Código</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
-            <div class="h-48 overflow-hidden relative">
-                <img src="assets/Chatbot(SISBI).PNG"
-                     alt="Chatbot SISBI" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                    <span class="text-white font-bold border border-white px-4 py-2 rounded-full">Ver Imágenes</span>
-                </div>
-            </div>
-            <div class="p-6">
-                <h3 class="text-xl font-bold text-white mb-2">Chatbot SISBI</h3>
-                <p class="text-gray-400 text-sm mb-4 line-clamp-3">
-                    Chatbot desarrollado en php y react con apis integradas y con funciones de entrada de voz.
-                </p>
-                <div class="flex flex-wrap gap-2 mb-6">
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-red-400 border border-gray-700">Java</span>
-                    <span class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-300 border border-gray-700">SQL</span>
-                </div>
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-2">
-                    <a href="https://sisbib.unmsm.edu.pe" target="_blank" class="text-white hover:text-purple-400 text-sm font-medium"><i class="fas fa-external-link-alt"></i> Biblioteca</a>
-                    <a href="assets/Chatbot(SISBI)2.PNG" target="_blank" class="text-gray-400 hover:text-white text-xs">Ver segunda captura</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="max-w-6xl mx-auto px-6 mb-20 text-center">
-    <h3 class="text-2xl font-bold text-white mb-8">Tecnologías</h3>
-    <div class="flex flex-wrap justify-center gap-4">
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">Excel</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-orange-500 hover:text-orange-400 transition cursor-default"><i class="fab fa-aws"></i> AWS</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-blue-500 hover:text-blue-400 transition cursor-default"><i class="fab fa-microsoft"></i> Microsoft 365</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-yellow-500 hover:text-yellow-400 transition cursor-default"><i class="fab fa-linux"></i> Linux</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-green-500 hover:text-green-400 transition cursor-default"><i class="fab fa-python"></i> Python</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-red-500 hover:text-red-400 transition cursor-default"><i class="fab fa-java"></i> Java</span>
-        <span class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">SIEM</span>
-    </div>
-</section>
-
-<footer id="contacto" class="border-t border-gray-800 bg-gray-900 mt-20">
-    <div class="max-w-5xl mx-auto px-6 py-16 text-center">
-        <h2 class="text-3xl font-bold text-white mb-8"> Contacto</h2>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-2xl mx-auto">
-            <a href="mailto:malcasebastian201@gmail.com" class="bg-gray-800 p-6 rounded-xl hover:bg-gray-750 border border-gray-700 hover:border-purple-500 transition group">
-                <i class="fas fa-envelope text-2xl text-purple-500 mb-2 group-hover:scale-110 transition"></i>
-                <p class="text-white font-medium">Email</p>
-                <p class="text-sm text-gray-400">malcasebastian201@gmail.com</p>
-            </a>
-            <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
-                <i class="fas fa-phone text-2xl text-green-500 mb-2"></i>
-                <p class="text-white font-medium">Celular</p>
-                <p class="text-sm text-gray-400">958-166-988</p>
-            </div>
-        </div>
-
-        <div class="flex justify-center gap-8">
-            <a href="https://github.com/SebastianMalca" target="_blank" class="text-gray-400 hover:text-white transition text-3xl">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="#" target="_blank" class="text-gray-400 hover:text-blue-500 transition text-3xl">
-                <i class="fab fa-linkedin"></i>
+        <div class="space-x-4">
+            <a href="#proyectos" class="text-sm font-medium hover:text-white transition">Proyectos</a>
+            <a href="#contacto"
+                class="bg-gray-800 hover:bg-gray-700 text-white px-5 py-2 rounded-full text-sm font-medium transition border border-gray-700">
+                Contactar
             </a>
         </div>
+    </nav>
 
-        <p class="mt-12 text-sm text-gray-600">
-            &copy; 2026 Sebastián Malca. Todos los derechos reservados.
+    <header class="max-w-4xl mx-auto px-6 py-20 text-center">
+        <h1 class="text-5xl md:text-7xl font-extrabold text-white mb-6 tracking-tight">
+            Hola, soy <br>
+            <span class="text-gradient">Sebastián Malca</span>
+        </h1>
+        <p class="text-xl md:text-2xl text-gray-400 leading-relaxed">
+            Estudiante del 7.º ciclo de Ingeniería de Software en la UNMSM.
         </p>
-    </div>
-</footer>
+    </header>
+
+    <section class="max-w-6xl mx-auto px-6 mb-24">
+        <div
+            class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-3xl p-8 md:p-12 shadow-2xl flex flex-col md:flex-row items-center gap-12">
+
+            <div class="w-full md:w-1/3 flex justify-center">
+                <div class="relative w-64 h-64 rounded-2xl overflow-hidden border-4 border-gray-700 shadow-lg group">
+                    <img src="assets/Perfil.png" alt="Sebastián Malca"
+                        class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
+                </div>
+            </div>
+
+            <div class="w-full md:w-2/3">
+                <h2 class="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="fas fa-user-astronaut text-purple-400"></i> Sobre mí
+                </h2>
+                <p class="mb-6 text-lg">
+                    Soy un estudiante de la carrera de Ingenerìa de software con interés en la <strong
+                        class="text-purple-300">Ciberseguridad</strong> , <strong class="text-purple-300">Desarrollo web
+                        y de aplicaciones</strong> y la <strong class="text-purple-300">Aumatización de
+                        procesos</strong>.
+                    Me considero una persona proactiva, con alta capacidad de aprendizaje y un enfoque orientado al
+                    logro de resultados, preparada para aportar valor desde el primer día.
+                </p>
+
+                <h3 class="text-white font-semibold mb-4">Conocimientos Clave:</h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                    <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Admin. básica
+                        Microsoft 365 y AWS</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-code text-blue-400"></i> Desarrollo de
+                        aplicaciones web</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-check text-green-400"></i> Principios de
+                        ciberseguridad</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-code text-blue-400"></i> Programación en Java y
+                        Python</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-terminal text-blue-400"></i> Scripts de
+                        automatización</li>
+                    <li class="flex items-center gap-2"><i class="fas fa-network-wired text-purple-400"></i> Análisis de
+                        vulnerabilidades</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 mb-24">
+        <h2 class="text-3xl font-bold text-white mb-10 text-center">💼 ¿Qué puedo ofrecer?</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <div
+                class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-blue-500 transition duration-300 group">
+                <div
+                    class="w-14 h-14 bg-blue-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-500 transition">
+                    <i class="fas fa-shield-alt text-2xl text-blue-400 group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Seguridad Informática</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Capacidad para identificar vulnerabilidades básicas, aplicar principios de hardening en sistemas y
+                    colaborar en la prevención de amenazas digitales.
+                </p>
+            </div>
+
+            <div
+                class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-purple-500 transition duration-300 group">
+                <div
+                    class="w-14 h-14 bg-purple-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-purple-500 transition">
+                    <i class="fab fa-aws text-2xl text-purple-400 group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Gestión Cloud</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Administración de entornos en AWS y Microsoft 365. Configuración de roles IAM, control de accesos y
+                    despliegue seguro de recursos.
+                </p>
+            </div>
+
+            <div
+                class="bg-gray-800 p-8 rounded-2xl border border-gray-700 hover:border-green-500 transition duration-300 group">
+                <div
+                    class="w-14 h-14 bg-green-500/10 rounded-lg flex items-center justify-center mb-6 group-hover:bg-green-500 transition">
+                    <i class="fas fa-robot text-2xl text-green-400 group-hover:text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Automatización</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Creación de scripts en Python y Bash para automatizar tareas repetitivas, auditoría de logs y
+                    optimización de procesos operativos.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+    <section id="proyectos" class="max-w-6xl mx-auto px-6 mb-24 scroll-mt-32">
+        <h2 class="text-3xl font-bold text-white mb-10 text-center">Mis Proyectos Destacados</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+            <!-- ===== PROYECTO 1: Python Port Scanner ===== -->
+            <div
+                class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="assets/Escaner%20Puertos(1).PNG" alt="Python Port Scanner"
+                        class="w-full h-full object-cover object-top group-hover:scale-110 transition duration-500">
+                    <div class="card-img-overlay">
+                        <button class="ver-imgs-btn" onclick="openLightbox('Python Port Scanner', [
+                                'assets/Escaner%20Puertos(1).PNG',
+                                'assets/Escaner%20Puertos(2).PNG'
+                            ], 0)">
+                            <i class="fas fa-images"></i> Ver Imágenes
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Python Port Scanner</h3>
+                    <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                        Escáner de puertos creado en Python con multiproceso, captura de banners y salida a JSON/TXT.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-green-400 border border-gray-700">Python</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-yellow-400 border border-gray-700">Linux</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-400 border border-gray-700">Ciberseguridad</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-orange-400 border border-gray-700">Redes</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <a href="https://github.com/SebastianMalca/python-port-scanner" target="_blank"
+                            class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i>
+                            Código</a>
+                        <button class="text-gray-400 hover:text-purple-400 text-xs transition" onclick="openLightbox('Python Port Scanner', [
+                                'assets/Escaner%20Puertos(1).PNG',
+                                'assets/Escaner%20Puertos(2).PNG'
+                            ], 0)">
+                            <i class="fas fa-photo-film"></i> Galería
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PROYECTO 2: Chat Bot ANMI ===== -->
+            <div
+                class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="assets/ANMI(1).PNG" alt="Chat Bot ANMI"
+                        class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                    <div class="card-img-overlay">
+                        <button class="ver-imgs-btn" onclick="openLightbox('Chat Bot ANMI', [
+                                'assets/ANMI(1).PNG',
+                                'assets/ANMI(2).PNG'
+                            ], 0)">
+                            <i class="fas fa-images"></i> Ver Imágenes
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Chat Bot ANMI</h3>
+                    <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                        El propósito de ANMI es actuar como asistente educativo de IA para combatir la anemia a través
+                        de la orientación nutricional materna e infantil..
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-green-400 border border-gray-700">Python</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-purple-400 border border-gray-700">IA</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-pink-400 border border-gray-700">Salud</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-400 border border-gray-700">NLP</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <a href="https://github.com/SebastianMalca/ChatBot-ANMI" target="_blank"
+                            class="text-white hover:text-purple-400 text-sm font-medium"><i class="fab fa-github"></i>
+                            Código</a>
+                        <button class="text-gray-400 hover:text-purple-400 text-xs transition" onclick="openLightbox('Chat Bot ANMI', [
+                                'assets/ANMI(1).PNG',
+                                'assets/ANMI(2).PNG'
+                            ], 0)">
+                            <i class="fas fa-photo-film"></i> Galería
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== PROYECTO 3: Chatbot SISBI ===== -->
+            <div
+                class="bg-gray-800 border border-gray-700 rounded-2xl overflow-hidden hover:shadow-2xl hover:border-purple-500 transition duration-300 group">
+                <div class="h-48 overflow-hidden relative">
+                    <img src="assets/Chatbot(SISBI).PNG" alt="Chatbot SISBI"
+                        class="w-full h-full object-cover object-top group-hover:scale-110 transition duration-500"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback si la imagen no carga -->
+                    <div style="display:none;"
+                        class="w-full h-full bg-gray-700 items-center justify-center flex-col gap-2">
+                        <i class="fas fa-robot text-4xl text-purple-400"></i>
+                        <span class="text-gray-400 text-sm">Chatbot SISBI</span>
+                    </div>
+                    <div class="card-img-overlay">
+                        <button class="ver-imgs-btn" onclick="openLightbox('Chatbot SISBI', [
+                                'assets/Chatbot(SISBI).PNG',
+                                'assets/Chatbot(SISBI)2.PNG'
+                            ], 0)">
+                            <i class="fas fa-images"></i> Ver Imágenes
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-xl font-bold text-white mb-2">Chatbot SISBI</h3>
+                    <p class="text-gray-400 text-sm mb-4 line-clamp-3">
+                        Chatbot desarrollado en PHP y React con APIs integradas y con funciones de entrada de voz para
+                        el Sistema de Bibliotecas de la UNMSM.
+                    </p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-indigo-400 border border-gray-700">PHP</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-cyan-400 border border-gray-700">React</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-yellow-400 border border-gray-700">API
+                            REST</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-purple-400 border border-gray-700">IA</span>
+                        <span
+                            class="px-3 py-1 bg-gray-900 rounded-full text-xs text-blue-300 border border-gray-700">Voz</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <a href="https://sisbib.unmsm.edu.pe" target="_blank"
+                            class="text-white hover:text-purple-400 text-sm font-medium"><i
+                                class="fas fa-external-link-alt"></i> Biblioteca</a>
+                        <button class="text-gray-400 hover:text-purple-400 text-xs transition" onclick="openLightbox('Chatbot SISBI', [
+                                'assets/Chatbot(SISBI).PNG',
+                                'assets/Chatbot(SISBI)2.PNG'
+                            ], 0)">
+                            <i class="fas fa-photo-film"></i> Galería
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-6 mb-20 text-center">
+        <h3 class="text-2xl font-bold text-white mb-8">Tecnologías</h3>
+        <div class="flex flex-wrap justify-center gap-4">
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">Excel</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-orange-500 hover:text-orange-400 transition cursor-default"><i
+                    class="fab fa-aws"></i> AWS</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-blue-500 hover:text-blue-400 transition cursor-default"><i
+                    class="fab fa-microsoft"></i> Microsoft 365</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-yellow-500 hover:text-yellow-400 transition cursor-default"><i
+                    class="fab fa-linux"></i> Linux</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-green-500 hover:text-green-400 transition cursor-default"><i
+                    class="fab fa-python"></i> Python</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-red-500 hover:text-red-400 transition cursor-default"><i
+                    class="fab fa-java"></i> Java</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-purple-500 hover:text-purple-400 transition cursor-default">SIEM</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-cyan-500 hover:text-cyan-400 transition cursor-default"><i
+                    class="fab fa-react"></i> React</span>
+            <span
+                class="px-6 py-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 hover:border-indigo-500 hover:text-indigo-400 transition cursor-default"><i
+                    class="fab fa-php"></i> PHP</span>
+        </div>
+    </section>
+
+    <footer id="contacto" class="border-t border-gray-800 bg-gray-900 mt-20">
+        <div class="max-w-5xl mx-auto px-6 py-16 text-center">
+            <h2 class="text-3xl font-bold text-white mb-8"> Contacto</h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12 max-w-2xl mx-auto">
+                <a href="mailto:malcasebastian201@gmail.com"
+                    class="bg-gray-800 p-6 rounded-xl hover:bg-gray-750 border border-gray-700 hover:border-purple-500 transition group">
+                    <i class="fas fa-envelope text-2xl text-purple-500 mb-2 group-hover:scale-110 transition"></i>
+                    <p class="text-white font-medium">Email</p>
+                    <p class="text-sm text-gray-400">malcasebastian201@gmail.com</p>
+                </a>
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+                    <i class="fas fa-phone text-2xl text-green-500 mb-2"></i>
+                    <p class="text-white font-medium">Celular</p>
+                    <p class="text-sm text-gray-400">958-166-988</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-8">
+                <a href="https://github.com/SebastianMalca" target="_blank"
+                    class="text-gray-400 hover:text-white transition text-3xl">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="#" target="_blank" class="text-gray-400 hover:text-blue-500 transition text-3xl">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </div>
+
+            <p class="mt-12 text-sm text-gray-600">
+                &copy; 2026 Sebastián Malca. Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ===== LIGHTBOX SCRIPT ===== -->
+    <script>
+        let lbImages = [];
+        let lbIndex = 0;
+        let lbTitle = '';
+
+        const overlay = document.getElementById('lightbox-overlay');
+        const lbImg = document.getElementById('lightbox-img');
+        const lbTitleEl = document.getElementById('lightbox-title');
+        const lbCounter = document.getElementById('lightbox-counter');
+        const lbThumbs = document.getElementById('lightbox-thumbs');
+
+        function openLightbox(title, images, startIndex) {
+            lbTitle = title;
+            lbImages = images;
+            lbIndex = startIndex;
+            renderLightbox();
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function renderLightbox() {
+            lbTitleEl.textContent = lbTitle;
+            lbImg.src = lbImages[lbIndex];
+            lbImg.alt = lbTitle + ' - imagen ' + (lbIndex + 1);
+            lbCounter.textContent = (lbIndex + 1) + ' / ' + lbImages.length;
+
+            // Thumbnails
+            lbThumbs.innerHTML = '';
+            lbImages.forEach(function (src, i) {
+                const thumb = document.createElement('img');
+                thumb.src = src;
+                thumb.alt = 'Miniatura ' + (i + 1);
+                thumb.className = 'lb-thumb' + (i === lbIndex ? ' active' : '');
+                thumb.onclick = function () { lbIndex = i; renderLightbox(); };
+                lbThumbs.appendChild(thumb);
+            });
+
+            // Show/hide arrows
+            document.getElementById('lb-prev').style.visibility = lbImages.length > 1 ? 'visible' : 'hidden';
+            document.getElementById('lb-next').style.visibility = lbImages.length > 1 ? 'visible' : 'hidden';
+        }
+
+        function prevImage() {
+            lbIndex = (lbIndex - 1 + lbImages.length) % lbImages.length;
+            renderLightbox();
+        }
+
+        function nextImage() {
+            lbIndex = (lbIndex + 1) % lbImages.length;
+            renderLightbox();
+        }
+
+        document.getElementById('lightbox-close').onclick = closeLightbox;
+        document.getElementById('lb-prev').onclick = prevImage;
+        document.getElementById('lb-next').onclick = nextImage;
+
+        // Close on overlay click (outside image)
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) closeLightbox();
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function (e) {
+            if (!overlay.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowLeft') prevImage();
+            if (e.key === 'ArrowRight') nextImage();
+        });
+    </script>
 
 </body>
+
 </html>
